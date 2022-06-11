@@ -1,0 +1,334 @@
+Objective:This course is designed for the participants who have already worked with JavaScript and wishes to gain in-depth knowledge about the ECMAScript. The course will give you enough understanding on the functionalities of ECMAScript and also about ES6, ES7, ES8 and ES9.
+-----------------------------------------
+Duration:
+----------------------------------------
+Topics
+--strict mode in JS
+--let and const declarations
+--spread operator
+--REST parameters
+--Lambda expressions
+--Function hoisting
+--Generator functions
+--Arrow functions
+--map and arrow function
+--arrow functions with this
+--
+--
+
+------------------------------------------
+Your First JavaScript Code
+Let us start with the traditional “Hello World” example".
+
+var message = "Hello World" 
+console.log(message)
+------------------------------------------
+Executing the Code
+We shall use Node.js to execute our code.
+
+Step 1 - Save the file as Test.js
+
+Step 2 - Right-click the Test.js file under the working files option in the project-explorer window of the Visual Studio Code.
+
+Step 3 - Select Open in Command Prompt option.
+
+Step 4 - Type the following command in Node’s terminal window.
+
+node Test.js 
+-------------------------------------------
+====>What is strict mode:
+The Strict Mode
+The fifth edition of the ECMAScript specification introduced the Strict Mode. The Strict Mode imposes a layer of constraint on JavaScript. It makes several changes to normal JavaScript semantics.
+
+The code can be transitioned to work in the Strict Mode by including the following -
+
+// Whole-script strict mode syntax 
+"use strict"; 
+ v = "Hi!  I'm a strict mode script!";  // ERROR: Variable v is not declared
+In the above snippet, the entire code runs as a constrained variant of JavaScript.
+
+JavaScript also allows to restrict, the Strict Mode within a block’s scope as that of a function. This is illustrated as follows -
+
+v = 15 
+function f1() { 
+   "use strict"; 
+   var v = "Hi!  I'm a strict mode script!"; 
+}
+In, the above snippet, any code outside the function will run in the non-strict mode. All statements within the function will be executed in the Strict Mode.
+------------------------------------
+===>let and const
+Type Syntax
+A variable must be declared before it is used. ES5 syntax used the var keyword to achieve the same. The ES5 syntax for declaring a variable is as follows.
+
+//Declaration using var keyword 
+var  variable_name
+ES6 introduces the following variable declaration syntax -
+
+Using the let.
+Using the const.
+-------------------------------------------------
+The Let and Block Scope
+The block scope restricts a variable’s access to the block in which it is declared. The var keyword assigns a function scope to the variable. Unlike the var keyword, the let keyword allows the script to restrict access to the variable to the nearest enclosing block.
+
+"use strict" 
+function test() { 
+   var num = 100 
+   console.log("value of num in test() "+num) { 
+      console.log("Inner Block begins") 
+      let num = 200 
+      console.log("value of num : "+num)  
+   } 
+} 
+test()
+The script declares a variable num within the local scope of a function and re-declares it within a block using the let keyword. The value of the locally scoped variable is printed when the variable is accessed outside the inner block, while the block scoped variable is referred to within the inner block.
+
+Note - The strict mode is a way to opt in to a restricted variant of JavaScript.
+------------------------------------------------------
+Spread Operator
+ES6 provides a new operator called the spread operator. The spread operator is represented by three dots “...” . The spread operator converts an array into individual array elements.
+
+Spread operator and function
+The following example illustrates the use of spread operators in a function
+
+<script>
+   function addThreeNumbers(a,b,c){
+      return a+b+c;
+   }
+   const arr = [10,20,30]
+   console.log('sum is :',addThreeNumbers(...arr))
+   console.log('sum is ',addThreeNumbers(...[1,2,3]))
+</script>
+-------------------------------------
+Rest Parameters
+Rest parameters are similar to variable arguments in Java. Rest parameters doesn’t restrict the number of values that you can pass to a function. However, the values passed must all be of the same type. In other words, rest parameters act as placeholders for multiple arguments of the same type.
+
+To declare a rest parameter, the parameter name is prefixed with three periods, known as the spread operator. The following example illustrates the same.
+
+function fun1(...params) { 
+   console.log(params.length); 
+}  
+fun1();  
+fun1(5); 
+fun1(5, 6, 7); 
+------------------------------------------------------
+Lambda Functions
+Lambda refers to anonymous functions in programming. Lambda functions are a concise mechanism to represent anonymous functions. These functions are also called as Arrow functions.
+
+Lambda Function - Anatomy
+There are 3 parts to a Lambda function -
+
+Parameters - A function may optionally have parameters.
+
+The fat arrow notation/lambda notation (=>): It is also called as the goes to operator.
+
+Statements - Represents the function’s instruction set.
+
+Tip - By convention, the use of a single letter parameter is encouraged for a compact and precise function declaration.
+
+Lambda Expression
+It is an anonymous function expression that points to a single line of code. Following is the syntax for the same.
+
+([param1, parma2,…param n] )=>statement;
+Example - Lambda Expression
+
+var foo = (x)=>10+x 
+console.log(foo(10)) 
+The Example declares a lambda expression function. The function returns the sum of 10 and the argument passed.
+
+The following output is displayed on successful execution of the above code.
+
+20
+Lambda Statement
+It is an anonymous function declaration that points to a block of code. This syntax is used when the function body spans multiple lines. Following is the syntax of the same.
+
+( [param1, parma2,…param n] )=> {       
+   //code block 
+}
+Example - Lambda Statement
+
+var msg = ()=> { 
+   console.log("function invoked") 
+} 
+msg() 
+The function’s reference is returned and stored in the variable msg. The following output is displayed on successful execution of the above code.
+
+function  invoked 
+Syntactic Variations
+Optional parentheses for a single parameter.
+
+var msg = x=> { 
+   console.log(x) 
+} 
+msg(10)
+Optional braces for a single statement. Empty parentheses for no parameter.
+
+var disp = ()=>console.log("Hello World") 
+disp();
+----------------------------------------------------
+Function Hoisting
+Like variables, functions can also be hoisted. Unlike variables, function declarations when hoisted, hoists the function definition rather than just hoisting the function’s name.
+
+The following code snippet, illustrates function hoisting in JavaScript.
+
+hoist_function();  
+function hoist_function() { 
+   console.log("foo"); 
+} 
+----------------------------------------------------
+Generator Functions
+When a normal function is invoked, the control rests with the function called until it returns. With generators in ES6, the caller function can now control the execution of a called function. A generator is like a regular function except that -
+
+The function can yield control back to the caller at any point.
+
+When you call a generator, it doesn’t run right away. Instead, you get back an iterator. The function runs as you call the iterator’s next method.
+
+Generators are denoted by suffixing the function keyword with an asterisk; otherwise, their syntax is identical to regular functions.
+
+The following example illustrates the same.
+
+"use strict" 
+function* rainbow() { 
+   // the asterisk marks this as a generator 
+   yield 'red'; 
+   yield 'orange'; 
+   yield 'yellow'; 
+   yield 'green'; 
+   yield 'blue'; 
+   yield 'indigo'; 
+   yield 'violet'; 
+} 
+for(let color of rainbow()) { 
+   console.log(color); 
+} 
+Generators enable two-way communication between the caller and the called function. This is accomplished by using the yield keyword.
+
+Consider the following example -
+
+function* ask() { 
+   const name = yield "What is your name?"; 
+   const sport = yield "What is your favorite sport?"; 
+   return `${name}'s favorite sport is ${sport}`; 
+}  
+const it = ask(); 
+console.log(it.next()); 
+console.log(it.next('Ethan'));  
+console.log(it.next('Cricket')); 
+Sequence of the generator function is as follows -
+
+Generator started in paused stated; iterator is returned.
+
+The it.next() yields “What is your name”. The generator is paused. This is done by the yield keyword.
+
+The call it.next(“Ethan”) assigns the value Ethan to the variable name and yields “What is your favorite sport?” Again the generator is paused.
+
+The call it.next(“Cricket”) assigns the value Cricket to the variable sport and executes the subsequent return statement.
+
+Hence, the output of the above code will be -
+
+{ 
+   value: 'What is your name?', done: false 
+} 
+{ 
+   value: 'What is your favorite sport?', done: false 
+} 
+{ 
+   value: 'Ethan\'s favorite sport is Cricket', done: true 
+}
+Note - Generator functions cannot be represented using arrow functions.
+-------------------------------------------------------
+Arrow Functions
+Arrow functions which are introduced in ES helps in writing the functions in JavaScript in a concise manner. Let us now learn about the same in detail.
+
+ES5 and Anonymous functions
+JavaScript makes heavy use of anonymous functions. An anonymous function is a function that does not have a name attached to it. Anonymous functions are used during function callback. The following example illustrates the use of an anonymous function in ES5 -
+
+<script>
+   setTimeout(function(){
+      console.log('Learning at TutorialsPoint is fun!!')
+   },1000)
+</script>
+The above example passes an anonymous function as a parameter to the predefined setTimeout() function. The setTimeout() function will callback the anonymous function after 1 second.
+
+The following output is shown after 1 second -
+
+Learning at TutorialsPoint is fun!!
+Arrow Function Syntax
+ES6 introduces the concept of arrow function to simplify the usage of anonymous function. There are 3 parts to an arrow function which are as follows -
+
+Parameters - An arrow function may optionally have parameters
+
+The fat arrow notation (=>) - It is also called as the goes to operator
+
+Statements - Represents the function’s instruction set
+
+Tip - By convention, the use of a single letter parameter is encouraged for a compact and precise arrow function declaration.
+
+Syntax
+//Arrow function that points to a single line of code
+()=>some_expression
+OR
+//Arrow function that points to a block of code
+()=> { //some statements }`
+OR
+//Arrow function with parameters
+(param1,param2)=>{//some statement}
+Example: Arrow function in ES6
+The following example defines two function expressions add and isEven using arrow function
+
+<script>
+   const add = (n1,n2) => n1+n2
+   console.log(add(10,20))
+
+   const isEven = (n1) => {
+      if(n1%2 == 0)
+         return true;
+      else
+         return false;
+   }
+   console.log(isEven(10))
+</script>
+------------------------------------------------------------
+Array.prototype.map() and arrow function
+In the following example, an arrow function is passed as a parameter to the Array.prototype.map() function. The map() function executes the arrow function for each element in the array. The arrow function in this case, displays each element in the array and its index.
+
+<script>
+   const names = ['TutorialsPoint','Mohtashim','Bhargavi','Raja']
+   names.map((element,index)=> {
+      console.log('inside arrow function')
+      console.log('index is '+index+' element value is :'+element)
+   })
+</script>
+---------------------------------------------
+Arrow function and “this”
+Inside an arrow function if we use this pointer, it will point to the enclosing lexical scope. This means arrow functions do not create a new this pointer instance whenever it is invoked. Arrow functions makes use of its enclosing scope. To understand this, let us see an example.
+
+<script>
+   //constructor function
+   function Student(rollno,firstName,lastName) {
+      this.rollno = rollno;
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.fullNameUsingAnonymous = function(){
+         setTimeout(function(){
+            //creates a new instance of this ,hides outer scope of this
+            console.log(this.firstName+ " "+this.lastName)
+         },2000)
+      }
+      this.fullNameUsingArrow = function(){
+         setTimeout(()=>{
+            //uses this instance of outer scope
+            console.log(this.firstName+ " "+this.lastName)
+         },3000)
+      }
+   }
+   const s1 = new Student(101,'Mohammad','Mohtashim')
+   s1.fullNameUsingAnonymous();
+   s1.fullNameUsingArrow();
+</script>
+When an anonymous function is used with setTimeout(), the function gets invoked after 2000 milliseconds. A new instance of “this” is created and it shadows the instance of the Student function. So, the value of this.firstName and this.lastName will be undefined. The function doesn't use the lexical scope or the context of current execution. This problem can be solved by using an arrow function.
+
+The output of the above code will be as follows -
+
+undefined undefined
+Mohammad Mohtashim
+---------------------------------------------------------

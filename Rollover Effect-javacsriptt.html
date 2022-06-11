@@ -1,0 +1,58 @@
+<!DOCTYPE HTML><HTML>
+<HEAD>
+<STYLE>
+h2
+{
+font-family:verdana;
+font-size:30px;
+color:darkcyan;
+text-align:center;
+}
+h3
+{
+text-align:center;
+font-family:verdana;
+color:darkcyan;
+font-size:20px;
+}
+#para1
+{
+font-family:verdana;
+font-size:18px;
+text-align:center;
+color:darkcyan;
+}
+</STYLE>
+<SCRIPT>
+function rollover(img, imgsrc)
+{
+// objectname.propertyname= value
+img.src=imgsrc; // changing the image src dynamically
+}
+</SCRIPT>
+</HEAD>
+<BODY>
+<H2> Product Details </H2>
+<HR><HR>
+<H3> Check out the latest products on our website. Exciting Discounts, Hurry !!</H3>
+<DIV style="position:absolute; top:180px; left:400px;">
+<P ID="para1"> Move the mouse over the product image </P>
+
+<IMG ID="productImage1" src="p1.jpg" height="150" onmouseover="rollover(this,'p2.jpg')"
+ onmouseout="rollover(this,'p1.jpg')"/>
+
+
+<IMG ID="p2" src="p3.jpg" height="150" onmouseover="rollover(this,'p4.jpg')" onmouseout="rollover(this,'p3.jpg')"/>
+</DIV>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+

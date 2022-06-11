@@ -1,0 +1,36 @@
+<html>
+<head>
+</head>
+<body>
+<h2>Add two numbers </h2>
+<script type="text/javascript">
+var num1,num2,res=0;
+num1=parseFloat(prompt("Enter First Numer"));
+num2=parseFloat(prompt("Enter second Numer"));
+op=prompt("Enter a operator")
+switch(op)
+{
+	case '+':
+		res=num1+num2;
+	    break; 
+	case '-':
+		res=num1-num2;
+	    break; 
+	case '*':
+		res=num1*num2;
+	    break; 
+	case '/':
+		res=num1/num2;
+	    break; 
+	case '%':
+		res=num1%num2;
+	    break; 
+	default:
+		alert("Invalid operator");
+
+	}
+	document.write("Result=" + res);
+</script>
+</body>
+
+</html>

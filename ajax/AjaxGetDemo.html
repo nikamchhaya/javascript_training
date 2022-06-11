@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+$("button").click(function(){
+$.get("Source", function (data) {
+$("#content").html(data);});
+});
+});
+</script>
+</head>
+<body>
+<button>Click here to Fetch Data</button>
+<div id="content">
+Text will appear here.
+</div>
+</body>
+
+
+</html>

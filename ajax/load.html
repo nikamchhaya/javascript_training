@@ -1,0 +1,23 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+$("button").click(function(){
+$("#toload").load("Source.html #AT", null, function(responseText, statusText, xhr){
+if(statusText == "success")
+alert("Successfully loaded the content!");
+if(statusText == "error")
+alert("An error occurred: " + xhr.status + " - " + xhr.statusText);
+});
+});
+});
+</script>
+</head>
+<body>
+<h3>Appraisal of Gold Ornaments</h3>
+<div id="toload"></div>
+<button>Get Data</button>
+</body>
+</html>

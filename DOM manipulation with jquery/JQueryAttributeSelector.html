@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+$(document).ready(function ()
+ 	 { 
+var res = $('ul[class="Greater_Ninety"]');
+ res.css("background-color", "yellow");
+
+var res1 = $('ul[class="Lesser_Ninety"]');
+ res1.css("background-color", "lime");
+ });
+
+</script>
+</head>
+<body>
+
+<div>Names of Students who have scored more than 90%:</div>
+<ul class="Greater_Ninety">
+	<li>Stephen: 98</li>
+	<li>Joseph: 95</li>
+	<li>Mary: 92</li>
+</ul>
+<div>Names of students who have scored between 70% and 90%:</div>
+<ul class="Lesser_Ninety">
+	<li>John: 85</li>
+	<li>Fred: 80</li>
+	<li>Steve: 78</li>
+	<li>Peter: 75</li>
+	<li>Barbara: 70</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,1825 @@
+part 2
+=======================================================
+Next Generation Javascript: They have included a couple of changes in the way the way javascript is written
+- Inclusion of let and const to declare variable
+- Classess in Javascript
+- Arrow functions: short-form for writing function
+- Imports and exports
+- Spread and Rest Operator
+------------------------------------------------------------
+-->let and const (bye bye var)
+
+-  Differences in declaration
+1)var -->Declaration --->Scope:Function-->Global Properties:Yes
+2)let-->Temporal dead zone-->Scope:Block-->Global Properties:No
+3)const	-->Temporal dead zone-->Scope:Block-->Global Properties:No
+
+------------------------------------------------------------
+- let and const has block level scope while var has function level scope.
+
+---> Declaring using var
+
+Example: var
+function printVar() {
+    var a = 10;
+    if (true) {
+        var a = 20;
+    }
+    console.log(a); // this  prints 20( not expected)
+}
+printVar
+
+Note: In ES5, when you declare a variable using the var keyword, the scope of the variable is global if you declare it outside of a function or local in case you declare it inside a function.Therefore, we have to be very careful in using this functionality, because there is a possibility of overriding an existing value.
+
+---->ES6 provides a new way of declaring a variable by using the let keyword. The let keyword is similar to the var keyword, except that the variables it declares are block-scoped
+
+Example:let function, the value of “a” is not overridden outside the block.
+function print_let() {
+    let a = 10;
+    if (true) {
+        let a = 20;
+    }
+    console.log(a); // this  prints 10( block level scope)
+}
+---->JavaScript let and global object
+- When you declare a global variable using the var keyword, you are adding that variable to the property list of the global object. In the case of the web browser, the global object is the window.
+
+Example:
+
+var a = 10;
+console.log(window.a); // 10
+
+However, when you use the let keyword to declare a variable, that variable is not attached to the global object as a property. Here is an example:
+
+let b = 20;
+console.log(window.b);
+
+---->JavaScript let and callback function in a for loop
+Example.
+
+for (var i = 0; i < 5; i++) {
+    setTimeout(function () {
+        console.log(i);
+    }, 1000);
+}
+
+Note: The intention of the code is to output numbers from 0 to 4 in the console every second. However, it outputs the number 5.The reason is that after five iterations, the value of the  i variable is 5. And the five instances of the callback function passed to the setTimeOut() function refers to the same variable i with the final value 5.
+
+- In ES6, the let keyword declares a new variable in each loop iteration, therefore, you just need to replace the var keyword by the let keyword to fix the issue.
+
+for (let i = 0; i < 5; i++) {
+    setTimeout(function () {
+        console.log(i);
+    }, 1000);
+}
+
+- To make the code completely ES6 style, you can use an arrow function as follows:
+
+for (let i = 0; i < 5; i++) {
+    setTimeout(() => console.log(i), 1000);
+}
+
+---->Redeclaration
+- The var keyword allows you to redeclare a variable without any issue:
+
+var counter = 0;
+var counter;
+console.log(counter); // 0
+
+- However, redeclaring a variable using the let keyword will result in an error:
+
+let counter = 0;
+let counter;
+console.log(counter);
+
+---->JavaScript let variables and hoisting
+Let’s examine the following example:
+
+{
+    console.log(counter); // 
+    let counter = 10;    
+}
+
+Note: In the function, accessing the counter variable before declaring it causes a ReferenceError. JavaScript engine will hoist the variables declared using the let keyword to the top of the block. However, it does not initialize the variables. Therefore, when you reference uninitialized variables, you get a ReferenceError.
+
+---->Temporal death zone (TDZ)
+A variable declared by the let keyword has a so-called temporal dead zone (TDZ). The TDZ is the time from the start of the block until the variable declaration is processed.
+
+Example illustrates that the temporal dead zone is time-based not location-based.
+
+{ // enter new scope, TDZ starts
+    let log = function () {
+        console.log(foo); // foo declared later
+    };
+
+    // This is the TDZ and accessing foo 
+    // would cause a ReferenceError
+
+    let foo = 10; // TDZ ends
+    log(); // called outside TDZ
+}
+
+Note that if you access a variable declared by the let keyword in the TDZ, you get a ReferenceError
+
+
+---->
+---->
+Some of the rules of thumb when to use which variable declaration:
+
+(1) don't use var anymore, because let and const are more specific
+(2) default to const, because it cannot be re-assigned or re-declared
+(3) use let when re-assigning the variable
+
+- While let is usually used in a for loop for incrementing the iterator, const is normally used for keeping JavaScript variables unchanged. Even though it is possible to change the inner properties of objects and arrays when using const, the variable declaration shows the intent of keeping the variable unchanged though.
+=================================================================================
+-----> Functional Programming
+- Functional programming is a style of programming that attempts to pass functions as arguments(callbacks) and return functions without side-effects(changes to the program’s state).
+- Some of the new concepts introduced are:
+(1)Pure Functions
+(2)Currying
+(3)Higher-Order functions
+
+------------------------------------------------------------
+--->Pure Functions in Javascript
+------------------------------------------------------------
+
+- If  for specific input parameters, we always have a specific output then they could be tagged as pure functions in Javascript
+- The output is solely dependent on Input parameters and no other external variable.
+Here is a simple example of Impure Function:
+
+var initialValue = 10;
+
+function addData(newValue) {
+  return initialValue + newValue;
+}
+
+Note: The above function takes an input parameter “newValue” and adds value from an external variable “initialValue” to it. In this case, the function is dependent on variables that are not in the scope of this function, so they introduce Impurity to the given function
+
+- let’s look for the simple Pure Function
+function addData(firstInput, secondInput) {
+  return firstInput + secondInput;
+}
+
+var getData = addData(1, 2);
+
+Note: The function given above defines the output on the basis of the input parameter only. No variable, other than the input parameter, is adding its impact to the output. Also, we can see that the function does not modify any other variable that does not belong to this function. Hence it adheres to the concept of Pure Functions.
+
+- Pure Functions have a huge performance impact during execution on the Browser.
+- For E.g. Picture a scenario where a specific Pure Function is getting called multiple times. The Application calls for the same function multiple times with the same parameters — assume “add(10, 20)”. After executing it multiple times, the Chrome V8 Engine tries to optimize the code further by storing the execution result of the following function call. On the next call to the same function, with the same parameter, instead of executing the function again, the cached result is returned. Hence enhancing the Application Performance.
+
+-These are the key features of Pure Functions:
+1. Pure functions are deterministic
+2. Functions should not introduce side effects - If the application updates certain data that is observable outside the called function, it can be considered a side effect introduced by the function
+few scenarios that can cause side effects are:
+-Modifying any external variable or object property
+-Logging data to the console
+-Writing Data to a file
+-Writing data to the network
+-Triggering any external process
+-Calling any other functions with side-effects
+-Making Asynchronous Data Calls
+--------------------------------------------------------------------------
+Classes in Javascript
+---------------------------------------------------------------------------
+- JavaScript classes are fairly new in the language.Previously, there was only JavaScript's prototype chain which has been used for inheritance too
+- JavaScript classes build up on top of the prototypical inheritance giving the whole thing a simpler representation
+- Example: 
+class Developer {
+  constructor(firstname, lastname) {
+    this.firstname = firstname;
+    this.lastname = lastname;
+  }
+ 
+  getName() {
+    return this.firstname + ' ' + this.lastname;
+  }
+}
+ 
+var me = new Developer('Robin', 'Wieruch');
+ 
+console.log(me.getName());
+
+- extends statement can be used to inherit with one class from another class
+- The more specialized class inherits all the abilities from the more general class with the extends statement, and can add its specialized abilities to it
+
+Example:
+class Developer {
+  constructor(firstname, lastname) {
+    this.firstname = firstname;
+    this.lastname = lastname;
+  } 
+  getName() {
+    return this.firstname + ' ' + this.lastname;
+  }
+}
+ 
+class ReactDeveloper extends Developer {
+  getJob() {
+    return 'React Developer';
+  }
+}
+ 
+var me = new ReactDeveloper('Robin', 'Wieruch');
+ 
+console.log(me.getName());
+console.log(me.getJob());
+--------------------------------------------------------------------------
+Arrow Functions in Javascript
+---------------------------------------------------------------------------
+- one of JavaScript's language additions in ES6 which pushed JavaScript forward in functional programming.
+
+// JavaScript ES5 function
+function getGreeting() {
+  return 'Welcome to JavaScript';
+}
+ 
+// JavaScript ES6 arrow function with body
+const getGreeting = () => {
+  return 'Welcome to JavaScript';
+}
+ 
+// JavaScript ES6 arrow function without body and implicit return
+const getGreeting1 = () =>
+  'Welcome to JavaScript';
+
+- often used in React applications for keeping the code concise and readable
+-way to create function in a shorter way
+-resolve issues which you have with this keyword(no surprise changes in the context of this during runtime)
+
+Example:Old way of writing function:
+let print = function (name) {
+    console.log(name);
+}
+
+New way of writing function:
+let print1 =  (name) => {
+    console.log(name);
+}
+//it further can be condensed, if u have only one argument
+let print2 =  name => {
+    console.log(name);
+}
+
+If your function only returns some value, and nothing else, you can use just a one liner function. For example,
+let multiply =  (number) => {
+    return number*2;
+}
+// you can omit curly braces and return keyword
+let multiply =  (number) => number*2;
+
+Important:
+ - When having no arguments, you have to use empty parentheses in the function declaration:
+- When having exactly one argument, you may omit the parentheses:
+	const callMe = name => { console.log(name);  }
+- When just returning a value, you can use the following shortcut:
+	const returnMe = name => name
+That's equal to:
+	const returnMe = name => { return name; }
+
+-Unlike other functions, the value of this inside arrow functions is not dependent on how they are invoked or how they are defined.
+-It depends only on its enclosing context.
+Example:
+let People = function(person, age) { 
+        this.person = person; 
+        this.age = age; 
+        this.info = function() { 
+  
+         // logs People 
+         document.write(this); 
+  
+         setTimeout(function() { 
+            // here this!=People 
+           document.write(this.person + " is " + this.age +  
+                                              " years old"); 
+          }, 3000); 
+        } 
+    }  
+   let person1 = new People('John', 21); 
+  
+// logs : undefined is undefined years old after 3 seconds 
+person1.info(); 
+
+-The reason that we get undefined outputs instead of the proper info as output happens because the function() defined as the callback for setTimeout has a normal function invocation and as we know, this means that its context is set to the global context or in other words the value of this is set to the window object.
+
+Example:
+
+let People = function(person, age) { 
+        this.person = person; 
+        this.age = age; 
+        this.info = function() { 
+  
+            // logs People 
+            document.write(this);  
+  
+           setTimeout(() => {  
+            // arrow function to make lexical "this" binding 
+            // here this=People."this" has been inherited 
+            document.write(this.person + " is " + this.age  
+                                           + " years old"); 
+           }, 3000); 
+        } 
+    }  
+let person1 = new People('John', 21); 
+  
+// logs : John is 21 years old after 3 seconds 
+person1.info();  
+
+--------------------------------------------------------------------------
+Export and Import in Javascript
+---------------------------------------------------------------------------
+
+------>
+-import other JS files so that files know their dependency.
+- use export keyword to make functionality available to outside file
+- There are two types of export; export default and named export . 
+Example:If you want to expose a single function from your file you can use the default export as given below
+export default myfunc
+
+-->File: arithmetic.js
+let multiply =  (number) => number*2;
+export default multiply
+
+- To use the file
+--->Program: Calculate.js
+import multiply from './path/arithmetic.js'
+multiply(3)
+
+-->File: arithmetic.js (updated)
+const multiply =  (number) => number*2;
+let addition =  (number) => number+2;
+let division =  (number) => number/2;
+export const multiply
+export division
+
+Example:When you have multiple functions you may use the below syntax. We call this as a named export
+export const func1
+export const func2
+
+Example:For the default export as given above, you may use the below syntax
+
+import myfunc from './somefile'
+import person from './somefile'
+
+Example:If you are importing multiple functions :
+
+import { func1 } from './somefile'
+import { func1, func2 } from './somefile'
+import { func1 as f1, func2 as f2 } from './somefile'
+
+Example:You can import all at one and use them as below:
+import * as myFunctionPool from './somefile'
+// call seperate functions as 
+myFunctionPool.func1()
+myFunctionPool.func2()
+
+---> default imports/exports: It can be used for a few use cases:
+- to export and import a single functionality
+- to highlight the main functionality of the exported API of a module
+- to have a fallback import functionality
+
+-->Example:FileName (file1.js)
+const robin = {
+  firstname: 'Robin',
+  lastname: 'Wieruch',
+};
+ 
+export default robin;
+
+-- To use it from a different file type in as:
+import developer from './file1.js';
+ 
+console.log(developer);
+
+- Furthermore, the import name can differ from the exported default name. You can also use it in conjunction with the named export and import statements:
+
+const firstname = 'Robin';
+const lastname = 'Wieruch';
+ 
+const person = {
+  firstname,
+  lastname,
+};
+ 
+export {
+  firstname,
+  lastname,
+};
+ 
+export default person;
+- And import the default or the named exports in another file:
+
+import developer, { firstname, lastname } from './file1.js';
+ 
+console.log(developer);
+// output: { firstname: 'Robin', lastname: 'Wieruch' }
+console.log(firstname, lastname);
+// output: Robin Wieruch
+You can also spare additional lines and export the variables directly for named exports:
+
+export const firstname = 'Robin';
+export const lastname = 'Wieruch';
+
+- These are the main functionalities for ES6 modules. They help you to organize your code, to maintain your code, and to design reusable module APIs. You can also export and import functionalities to test them.
+--------------------------------------------------------------------------
+Spread and Rest Operator(...) in Javascript
+---------------------------------------------------------------------------
+- one operator ... which acts as spread or rest depending on how we use it
+- Spread : Used to pull elements of an array or properties of an object
+
+Example: with an array:
+const oldArray = [1, 2, 3];
+const newArray = [...oldArray, 4, 5] // now [1, 2, 3, 4, 5]
+
+Example with an object:
+const oldObject={ name: 'Max'}; 
+const newObject={...oldObject, age: 28 }; // {name: 'Max', age: 28}
+
+- Rest Operator: It is used to merge a list of function arguments into array. Here is syntax for rest operator:
+function sortArgs(...args) {    
+    return args.sort();
+}
+
+In above code, sortArgs receives unlimited arguments and all arguments would be merged in array. 
+sortArgs(21,12,11,56)
+sortArgs(21,12)
+sortArgs(21,12,123,321,221,22,43,432,21)
+sortArgs(21,12,123,321,221,22,43,432,21,'a','v')
+
+----->Destructuring array and object
+
+- allows us to easily extract array elements or object properties and store them in variable
+- Spread takes out all array elements, or all object properties and distributes them in new array or object.
+- On the other hand, Destructuring allows you to pull out a single element or a single object property and store them in variables.
+
+Example: //array destructuring 
+let [a, b] = [6, 8]
+console.log(a); // 6
+console.log(b); // 8
+
+//Example: Object destructuring
+---->Suppose you have a person object with two properties: firstName and lastName.
+
+let person = {
+    firstName: 'John',
+    lastName: 'Doe'
+};
+- Prior to ES6, when you want to assign the variables to the properties of the person object, you typically do like this:
+
+let firstName = person.firstName;
+let lastName = person.lastName; 
+
+----> ES6 introduces the object destructuring syntax that provides an alternative way to assign properties of an object to variables. If the variables have the same names as the properties of the object, you can make the code more concise as follows:
+
+let {
+   firstName, 
+   lastName
+} = person;
+
+console.log(firstName); // 'John'
+console.log(lastName); // 'Doe'
+
+----> When you assign a property that does not exist to a variable using the object destructuring, the variable is set to undefined. For example:
+
+let {
+    firstName,
+    lastName,
+    middleName
+} = person;
+
+console.log(middleName);
+
+----> You can assign a default value ot the variable when the property of an object doesn’t exist. For example:
+
+let person = {
+    firstName: 'John',
+    lastName: 'Doe',
+    currentAge: 28
+};
+
+let {
+    firstName,
+    lastName,
+    middleName = '',
+    currentAge = 18
+} = person;
+
+console.log(middleName); // ''
+console.log(currentAge); // 28
+
+- However, when the person object does have the middleName property, the assignment works as usual
+
+let person = {
+    firstName: 'John',
+    lastName: 'Doe',
+    middleName: 'C.',
+    currentAge: 28
+};
+
+let {
+    firstName,
+    lastName,
+    middleName = '',
+    currentAge: age = 18
+} = person;
+
+console.log(middleName); // 'C.'
+console.log(currentAge); // 28
+
+--->Destructing a null object
+- If you expect a function to return an object. However, for some reasons, the returned object is null, like this:
+
+function getPerson() {
+    return null;
+}
+And you use the object destructuring assignment:
+
+let {
+    firstName,
+    lastName
+} = getPerson();
+
+Note: The code will throw a TypeError
+
+- To avoid this, you can use the OR operator (||) to fallback the null object to an empty object:
+
+let {
+    firstName,
+    lastName
+} = getPerson() || {};
+
+--->Nested object destructuring
+- Assuming that you have an employee object which has a name object as the property:
+
+let employee = {
+    id: 1001,
+    name: {
+        firstName: 'John',
+        lastName: 'Doe'
+    }
+};
+
+- The following statement destructures the properties of the nested nameobject into individual variables:
+
+let {
+    name: {
+        firstName,
+        lastName
+    }
+} = employee;
+
+console.log(firstName); // John
+console.log(lastName);
+
+- It’s possible to do multiple assignement of a property to multiple variables:
+
+let employee = {
+    id: 1001,
+    name: {
+        firstName: 'John',
+        lastName: 'Doe'
+    }
+};
+
+let {
+    name: {
+        firstName,
+        lastName
+    },
+    name
+} = employee;
+
+console.log(firstName); // John
+console.log(lastName); // Doe
+console.log(name);
+
+---------Destructuring is very useful when working with function arguments. 
+- Suppose you have a function that displays the person object:
+
+let display = (person) => console.log(`${person.firstName} ${person.lastName}`);
+
+let person = {
+    firstName: 'John',
+    lastName: 'Doe'
+};
+
+display(person);
+
+- It’s possible to destructure the object argument passed into the function like this:
+
+let display = ({firstName, lastName}) => console.log(`${firstName} ${lastName}`);
+
+let person = {
+    firstName: 'John',
+    lastName: 'Doe'
+};
+
+display(person);
+
+Note: It looks less verbose especially when you use many properties of the argument object. This technique is often used in React.
+
+===><<ToDo>> Lets build an API for working with Stacks using all concepts learnt(Closures, Private variable declaration,Spread Operator, Arrow Functions)
+
+const buildStack = () => {
+  let items = [];
+
+  const push = (item) => items = [item, ...items];
+  const pop = () => items = items.slice(1);
+  const peek = () => items[0];
+  const isEmpty = () => !items.length;
+  const size = () => items.length;
+
+  return {
+    push,
+    pop,
+    peek,
+    isEmpty,
+    size,
+  };
+};
+
+- Calling the different Functions
+
+const stack = buildStack();
+
+stack.isEmpty(); // true
+
+stack.push(1); // [1]
+stack.push(2); // [2, 1]
+stack.push(3); // [3, 2, 1]
+stack.push(4); // [4, 3, 2, 1]
+stack.push(5); // [5, 4, 3, 2, 1]
+
+stack.peek(); // 5
+stack.size(); // 5
+stack.isEmpty(); // false
+
+stack.pop(); // [4, 3, 2, 1]
+stack.pop(); // [3, 2, 1]
+stack.pop(); // [2, 1]
+stack.pop(); // [1]
+
+stack.isEmpty(); // false
+stack.peek(); // 1
+stack.pop(); // []
+stack.isEmpty(); // true
+stack.size(); // 0
+
+--------------------------------------------------------------------------
+Currying in Javascript
+---------------------------------------------------------------------------
+- Currying is the process of taking a function with multiple arguments and turning it into a sequence of functions each with only a single argument.
+- It returns a new function that expects the next argument inline.
+- It keeps returning a new function until all the arguments are exhausted. The arguments are kept "alive"(via closure) and all are used in execution when the final function in the currying chain is returned and executed.
+
+-->Example: Normal Function without currying to add 2 numbers
+const add = (x, y) => x + y;
+add(1, 2); // 3
+
+-->Example: Above function re-written using Currying
+const add = (x) => {
+  function addY(y) {
+    return x + y;
+  }
+  return addY;
+};
+const addTen = add(10);
+addTen(20); // 30
+
+
+-->Example: Refactor addY into a anonymous arrow function:
+const add = (x) => {
+  return (y) => {
+    return x + y;
+  }
+};
+const addTen = add(10);
+addTen(20); // 30
+
+--->Example: Refactor for building one liner arrow functions:
+const add = (x) => (y) => x + y;
+add(10)(20);
+
+
+--->Example: Function with 3 arguments
+function multiply(a, b, c) {
+    return a * b * c;
+}
+multiply(1,2,3); 
+
+--->Example: Refactor to use Currying (Function with 3 arguments)
+function multiply(a) {
+    return (b) => {
+        return (c) => {
+            return a * b * c
+        }
+    }
+}
+console.log(multiply(1)(2)(3))
+
+or
+
+const mul1 = multiply(1);
+const mul2 = mul1(2);
+const result = mul2(3);
+log(result); // 6
+
+Note: Currying creates nesting functions according to the number of the arguments of the function. Each function receives an argument. If there is no argument there is no currying.
+
+Why it’s useful ?
+- Currying helps you to avoid passing the same variable again and again.
+- It helps to create a higher order function. It extremely helpful in event handling. See the blog post for more information.
+- Little pieces can be configured and reused with ease.
+
+---> Use cases of Currying
+(1)1. Write little code modules that can be reused and configured with ease, much like what we do with npm:
+For example, you own a store?? and you want to give 10%?? discount to your fav customers:
+function discount(price, discount) {
+    return price * discount
+}
+When a fav customer buys a good worth of $500, you give him:
+const price = discount(500,0.10); // $50 
+// $500? - $50 = $450
+You see that in the long run, we would find ourselves calculating discount with 10% on a daily basis.
+const price = discount(1500,0.10); // $150
+// $1,500 - $150 = $1,350
+const price = discount(2000,0.10); // $200
+// $2,000 - $200 = $1,800
+const price = discount(50,0.10); // $5
+// $50 - $5 = $45
+const price = discount(5000,0.10); // $500
+// $5,000 - $500 = $4,500
+const price = discount(300,0.10); // $30
+// $300 - $30 = $270
+
+- Note: It may seem trivial but if it is an expensive function then we really want to minimise the number of times it’s invoked.This process of injecting context is known as currying.
+
+- We can curry the discount function, so we don’t always add the 0.10 discount:
+function discount(discount) {
+    return (price) => {
+        return price * discount;
+    }
+}
+const tenPercentDiscount = discount(0.1);
+
+- Now, we can now calculate only with price of the goods bought by your fav customers:
+tenPercentDiscount(500); // $50
+// $500 - $50 = $450
+
+- Again, it happens that, some fav customers are more important than some fav customers- let’s call them super-fav customers. And we want to give 20% discount to our super-fav customers.
+We use our curried discount function:
+const twentyPercentDiscount = discount(0.2);
+We setup a new function for our super-fav customers by calling the curry function discount with a 0.2 value , that is 20%.
+The returned function twentyPercentDiscount will be used to calculate discounts for our super-fav customers:
+twentyPercentDiscount(500); // 100
+// $500 - $100 = $400
+twentyPercentDiscount(5000); // 1000
+// $5,000 - $1,000 = $4,000
+twentyPercentDiscount(1000000); // 200000
+// $1,000,000 - $200,000 = $600,000
+
+(2)Avoid frequently calling a function with the same argument:
+- For example, we have a function to calculate the volume of a cylinder:
+function volume(l, w, h) {
+    return l * w * h;
+}
+- It happens that all the cylinders in your warehouse?? are of height 100m. You will see that you will repeatedly call this function with h as 100:
+volume(200,30,100) // 2003000l
+volume(32,45,100); //144000l
+volume(2322,232,100) // 53870400l
+- To resolve this, you curry the volume function(like we did earlier):
+function volume(h) {
+    return (w) => {
+        return (l) => {
+            return l * w * h
+        }
+    }
+}
+- We can define a specific function for a particular cylinder height:
+const hCylinderHeight = volume(100);
+hCylinderHeight(200)(30); // 600,000l
+hCylinderHeight(2322)(232); // 53,870,400l
+
+Note: Closure makes currying possible in JavaScript. It’s ability to retain the state of functions already executed, gives us the ability to create factory?? functions?—?functions that can add a specific value to their argument.
+--------------------------------------------------------------------------
+Template Literals in Javascript
+---------------------------------------------------------------------------
+- Template literals are another JavaScript language specific feature that came with JavaScript ES6. It is worth to mention it shortly, because when people new to JavaScript and React see them, they can be confusing as well.
+
+-Example: When learning JavaScript, it's the following syntax that you grow up with for concatenating a string:
+
+function getGreeting(what) {
+  return 'Welcome to ' + what;
+}
+ 
+const greeting = getGreeting('JavaScript');
+console.log(greeting);
+// Welcome to JavaScript
+
+- Template literals can be used for the same which is called string interpolation:
+
+function getGreeting(what) {
+  return `Welcome to ${what}`;
+}
+You only have to use backticks and the ${} notation for inserting JavaScript primitives. However, string literals are not only used for string interpolation, but also for multiline strings in JavaScript:
+
+function getGreeting(what) {
+  return `
+    Welcome
+    to
+    ${what}
+  `;
+}
+Basically that's how larger text blocks can be formatted on multiple lines. 
+
+--------------------------------------------------------------------------
+SHORTHAND OBJECT ASSIGNMENT in Javascript
+---------------------------------------------------------------------------
+- In JavaScript ES6, you can use a shorthand property syntax to initialize your objects more concisely, like following object initialization:
+- Example: Tradional Way 
+const name = 'Robin';
+const user = {
+  name: name,
+};
+
+- When the property name in your object is the same as your variable name, you can do the following:
+- Example: ES6 Way
+const name = 'Robin';
+const user = {
+  name,
+};
+
+- Shorthand method names are also useful. In JavaScript ES6, you can initialize methods in an object more concisely:
+
+// without shorthand method names
+var userService = {
+  getUserName: function (user) {
+    return user.firstname + ' ' + user.lastname;
+  },
+};
+ 
+// shorthand method names
+const userService = {
+  getUserName(user) {
+    return user.firstname + ' ' + user.lastname;
+  },
+};
+Finally, you are allowed to use computed property names in JavaScript ES6:
+
+// normal usage of key property in an object
+var user = {
+  name: 'Robin',
+};
+ 
+// computed key property for dynamic naming
+const key = 'name';
+const user = {
+  [key]: 'Robin',
+};
+You are able to use computed property names to allocate values by key in an object dynamically, a handy way to generate lookup tables (also called dictionaries) in JavaScript.
+------------------------------------------------------------------
+--->Callback
+------------------------------------------------------------------
+- In computer programming, a callback is a piece of executable code that is passed as an argument to other code, which is expected to call back (execute) the argument at some convenient time.
+- JavaScript, a callback is a function passed into another function as an argument to be executed later.
+- This method of passing in functions to other functions to use them inside is used in JavaScript libraries almost everywhere.
+
+--->Example:
+  // add() function is called with arguments a, b 
+   // and callback, callback will be executed just  
+   // after ending of add() function 
+   function add(a, b , callback){ 
+   	console.log(`The sum of ${a} and ${b} is ${a+b}.`); 
+   	callback(); 
+   } 
+     
+   // disp() function is called just 
+   // after the ending of add() function  
+   function disp(){ 
+   	console.log('This must be printed after addition'); 
+   } 
+     
+   // Calling add() function 
+   add(5,6,disp);   
+
+- An alternate way to implement above code is shown below with anonymous functions being passed.
+
+// add() function is called with arguments a, b 
+   // and callback, callback will be executed just  
+   // after ending of add() function 
+   function add(a, b , callback){ 
+   console.log(`The sum of ${a} and ${b} is ${a+b}.` +"<br>"); 
+   callback(); 
+   } 
+   
+   // add() function is called with arguments given below 
+   add(5,6,function disp(){ 
+   console.log('This must be printed after addition.'); 
+   }); 
+
+---->Why do we need Callbacks?
+- JavaScript is an event driven language. This means that instead of waiting for a response before moving on, JavaScript will keep executing while listening for other events.
+- Consider if function contains some sort of code that can’t be executed immediately? For example, an API request where we have to send the request then wait for a response? In that case JavaScript dmay not execute our functions in the order we want
+- Callbacks are a way to make sure certain code doesn’t execute until other code has already finished execution.
+- As in previous example, the callback function is then defined in the second argument of our call 
+- A real world example is When you make requests to an API, you have to wait for the response before you can act on that response. A callback is important here because we need to wait for a response from the server before we can move forward in our code. We don’t know if our API request is going to be successful or not so after sending our parameters to the API via a get request, we wait. Once API responds, our callback function is invoked.
+---->Example:
+
+function getDivision(arg1, arg2, callback) {
+	var divisionValue = arg1/arg2;
+	callback(divisionValue);
+}
+getDivision(5, 15, function(num){
+return Math.round(num);
+}); 
+
+-----> Note: 
+- Functions that receive functions as arguments are called higher-order functions
+- The callback pattern is often used in asynchronous programming
+
+----->Example:  Suppose that you the following numbers array: let numbers = [1, 2, 4, 7, 3, 5, 6];
+-To find all the odd numbers in the array, you can use the filter() method of the Array object.The filter() method creates a new array with the elements that pass the test implemented by a function.
+- The following test function returns true if a number is an odd number:
+
+function isOddNumber(number) {
+    return number % 2;
+}
+
+- Now, you can pass the isOddNumber() to the filter() method:
+
+const oddNumbers = numbers.filter(isOddNumber);
+console.log(oddNumbers); // [ 1, 7, 3, 5 ]
+
+- In this example, the isOddNumber is a callback function. When you pass a callback function into another function, you just pass the reference of the function i.e., the function name without the parentheses ().
+- To make it shorter, you can use an anonymous function as a callback:
+
+let oddNumbers = numbers.filter(function(number) {
+    return number % 2;
+});
+console.log(oddNumbers); // [ 1, 7, 3, 5 ]
+
+- In ES6, you can use the arrow functions:
+
+let oddNumbers = numbers.filter(number => number % 2);
+
+- The invocation may be immediate as in a synchronous callback or it might happen at later time, as in an asynchronous callback.
+
+---->Callbacks are used in two ways: synchronous and asynchronous functions.
+
+(1)Synchronous callback functions : If your code executes sequentially from top to bottom, it is synchronous. The isOddNumber() function is an example of a synchronous callback function.
+- Example: In the below set of statements the arrow function is a callback used in a synchronous function.
+The sort() method completes first before the console.log() executes:
+
+let numbers = [1, 2, 4, 7, 3, 5, 6];
+numbers.sort((a, b) => a - b);
+console.log(numbers); // [ 1, 2, 3, 4, 5, 6, 7 ]
+
+(2)Asynchronous callback functions
+- Asynchronicity means that if JavaScript has to wait for an operation to complete, it will execute the rest of the code while waiting.
+-Note : JavaScript is a single-threaded programming language. It carries asynchronous operations via the callback queue and event loop.
+
+--->Sample Use Case 1: If the user is logged in display the name (User Logging)
+
+function login(processUserCbFunc) {
+  let user = fetchUser() // This is a fake function that takes time to run. It will log the user in, getting the users data                            // from the server.
+  // When fetchUser finishes running, we want to tell JavaScript to do something with the user's data
+  processUserCbFunc(user);
+}
+
+function processUser(user) {
+  return 'The logged in user is ' + user.name;
+}
+
+// log the user in and when that's done, process them
+login(processUser)
+
+----->Sample Use Case 2:  Bank Processing Transactions
+
+// Let's imagine you're processing bank transactions (deposits and withdrawals).
+// You might write your code like this with callbacks.
+
+// Transaction is a function that expects a dollar amount, and a callback function called action
+
+function transaction(amt, action) {
+  // rather than adding this if statement to make sure we're dealing with valid dollar amounts in both the deposit and withdraw functions below, we can write it once here.
+  // This helps keep our code D-R-Y (Don't Repeat Yourself)
+  if (amt <= 0) {
+    return 'Please use a valid amount';
+  }
+  // As long as the amt is greater than 0, we'll perform our action (invoke our callback function) passing in the amt.
+  return action(amt);
+}
+
+// a function that would deposit the given amount
+function deposit(amt) {
+  return 'You deposited $' + amt;
+}
+
+// a function that would withdraw the given amount
+function withdraw(amt) {
+  return 'You withdrew $' + amt;
+}
+
+// In these four invocations we call our transaction function with an amount,
+// and a callback representing which action we want to perform with the given amounts.
+
+transaction(100, deposit); // 'You deposited $100'
+
+transaction(50, withdraw); // 'You withdrew $50'
+
+transaction(-40, withdraw); // 'Please use a valid amount'
+
+transaction(-100, deposit); // 'Please use a valid amount'
+
+// As you can see above, callbacks provide a pattern for reusing chunks of
+// code and grouping/reducing our logic (in this case our simple if statement
+// that applies to both deposits and withdrawls).
+
+
+---->Sample Use Case 3: Download an Image and Process it once the download is complete
+- Example: Suppose that you need to develop a script that downloads a picture from a remote server and process it after the download completes:
+
+function download(url, callback) {
+    setTimeout(() => {
+        // script to download the picture here
+        console.log(`Downloading ${url} ...`);
+        
+        // process the picture once it is completed
+        callback(url);
+    }, 3000);
+}
+
+function process(picture) {
+    console.log(`Processing ${picture}`);
+}
+
+let url = 'https://www.sample.net/pic.jpg';
+download(url, process);
+
+Note:the process() is a callback passed into an asynchronous function.
+- When you use callbacks to continue code execution after asynchronous operations, these callbacks are called asynchronous callbacks.
+- By using asynchronous callbacks, you can register an action in advance without blocking the entire operation.
+
+To make the code cleaner, you can define the process() function as an anonymous function:
+
+function download(url, callback) {
+    setTimeout(() => {
+        // script to download the picture here
+        console.log(`Downloading ${url} ...`);
+        // process the picture once it is completed
+        callback(url);
+
+    }, 3000);
+}
+
+let url = 'https://www.javascripttutorial.net/pic.jpg';
+download(url, function(picture) {
+    console.log(`Processing ${picture}`);
+}); 
+
+---> Summary:
+- A callback is a function passed into another function as an argument to be executed later.
+- Callback functions can be synchronous or asynchronous.
+--------------------------------------------------------------
+Promises 
+--------------------------------------------------------------
+- Promises are used to handle asynchronous operations in JavaScript. They are easy to manage when dealing with multiple asynchronous operations where callbacks can create callback hell leading to unmanageable code.
+- Prior to promises events and callback functions were used but they had limited functionalities and created unmanageable code.Multiple callback functions would create callback hell that leads to unmanageable code.
+Events were not good at handling asynchronous operations.
+- Promises are the ideal choice for handling asynchronous operations in the simplest manner. They can handle multiple asynchronous operations easily and provide better error handling than callbacks and events.
+
+--->Benefits of Promises
+Improves Code Readability
+Better handling of asynchronous operations
+Better flow of control definition in asynchronous logic
+Better Error Handling
+
+--->A Promise has four states:
+fulfilled: Action related to the promise succeeded
+rejected: Action related to the promise failed
+pending: Promise is still pending i.e not fulfilled or rejected yet
+settled: Promise has fulfilled or rejected
+
+---->Creating a Promise
+- A promise can be created using Promise constructor.
+Syntax
+
+var promise = new Promise(function(resolve, reject){
+     //do something
+});
+
+- Promise constructor takes only one argument,a callback function.
+- Its arguments resolve and reject are callbacks provided by JavaScript itself. Our code is only inside the executor.
+(1) resolve(value) — if the job finished successfully, with result value : Perform operations inside the callback function and if everything went well then call resolve.
+(2) reject(error) — if an error occurred, error is the error object: If desired operations do not go well then call reject.
+
+---> The promise object returned by the new Promise constructor has these internal properties:
+
+state — initially "pending", then changes to either "fulfilled" when resolve is called or "rejected" when reject is called.
+result — initially undefined, then changes to value when resolve(value) called or error when reject(error) is called.
+
+--->Example: Resolved a Promise
+- a successful job completion, a “fulfilled promise”.
+
+Promise.resolve('abc')
+  .then(x => console.log(x));
+
+- Note:
+(1)The executor is called automatically and immediately (by new Promise).
+(2)The executor receives two arguments: resolve and reject. These functions are pre-defined by the JavaScript engine, so we don’t need to create them. We should only call one of them when ready.
+
+--->Example: transforming a Promise
+Promise.resolve([10, 20, 30])
+  .then(values => values.map(value => value * 2))
+  .then(values => console.log(values))
+
+--->Example: Rejecting a Promise (moves the promise object to "rejected" state)
+
+const myError = new Error('Problem!');
+Promise.reject(myError)
+.catch(err => console.log(err === myError));
+
+Note: In case something goes wrong, the executor should call reject. That can be done with any type of argument (just like resolve). But it is recommended to use Error objects (or objects that inherit from Error). The reasoning for that will soon become apparent.
+- The properties state and result of the Promise object are internal. We can’t directly access them. We can use the methods .then/.catch/.finally for that. 
+
+----------------------------------
+==> Consumers: then, catch, finally
+- A Promise object serves as a link between the executor (the “producing code” or “singer”) and the consuming functions (the “fans”), which will receive the result or error. 
+- Consuming functions can be registered (subscribed) using methods .then, .catch and .finally.
+
+
+---->Example: Extending the example and putting them together (resolved)
+let promise = new Promise(function(resolve, reject) {
+  setTimeout(() => resolve("done!"), 1000);
+});
+
+// resolve runs the first function in .then
+promise.then(
+  result => alert(result), // shows "done!" after 1 second
+  error => alert(error) // doesn't run
+);
+---->Example: Extending the example and putting them together (Rejected)
+let promise = new Promise(function(resolve, reject) {
+  setTimeout(() => reject(new Error("Error and Promise Rejected")), 1000);
+});
+
+// reject runs the second function in .then
+promise.then(
+  result => alert(result), // doesn't run
+  error => alert(error) // shows "Message" after 1 second
+);
+
+Note: If we’re interested only in successful completions, then we can provide only one function argument to .then
+
+---->Example: Extending the example and putting them together (Catch to Handle Errors)
+let promise = new Promise(function(resolve, reject) {
+  setTimeout(() => reject(new Error("Error : Promise got Rejected")), 1000);
+});
+
+// .catch(f) is the same as promise.then(null, f)
+promise.catch(alert); // shows Message after 1 second
+
+- The call .catch(f) is a complete analog of .then(null, f), it’s just a shorthand.
+
+---->Example: Extending the example and putting them together (Finally)
+new Promise((resolve, reject) => {
+  setTimeout(() => resolve("result"), 2000)
+})
+  .finally(() => alert("Promise ready"))
+  .then(result => alert(result)); // <-- .then handles the result
+
+- The call .finally(f) is similar to .then(f, f) in the sense that f always runs when the promise is settled: be it resolve or reject.
+- finally is a good handler for performing cleanup, e.g. stopping our loading indicators, as they are not needed anymore, no matter what the outcome is.
+
+new Promise((resolve, reject) => {
+  throw new Error("error");
+})
+  .finally(() => alert("Promise ready"))
+  .catch(err => alert(err));  // <-- .catch handles the error object
+
+--->Example: Basic Example (Promise Chainining)
+
+new Promise(function(resolve, reject) {
+  setTimeout(() => resolve(1), 1000); // (*)
+}).then(function(result) { // (**)
+  alert(result); // 1
+  return result * 2;
+}).then(function(result) { // (***)
+  alert(result); // 2
+  return result * 2;
+}).then(function(result) {
+  alert(result); // 4
+  return result * 2;
+});
+
+Note: 
+- The whole thing works, because a call to promise.then returns a promise, so that we can call the next .then on it.When a handler returns a value, it becomes the result of that promise, so the next .then is called with it
+
+--->Example: Basic Example (Promise Chainining) == Compare with Previous example.
+let promise = new Promise(function(resolve, reject) {
+  setTimeout(() => resolve(1), 1000);
+});
+promise.then(function(result) {
+  alert(result); // 1
+  return result * 2;
+});
+promise.then(function(result) {
+  alert(result); // 1
+  return result * 2;
+});
+promise.then(function(result) {
+  alert(result); // 1
+  return result * 2;
+});
+
+Note:
+- What we did here is just several handlers to one promise. They don’t pass the result to each other; instead they process it independently.
+
+
+--->Example: Returning promises (A handler, used in .then(handler) may create and return a promise.)
+- Returning promises allows us to build chains of asynchronous actions.
+
+new Promise(function(resolve, reject) {
+  setTimeout(() => resolve(1), 1000);
+}).then(function(result) {
+  alert(result); // 1
+  return new Promise((resolve, reject) => { // (*)
+    setTimeout(() => resolve(result * 2), 1000);
+  });
+}).then(function(result) { // (**)
+  alert(result); // 2
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(result * 2), 1000);
+  });
+}).then(function(result) {
+  alert(result); // 4
+});
+
+---->Example: Promise invoking another promise
+var p = new Promise(function (resolve, reject) {
+  setTimeout(() => reject(new Error('fail')), 3000)
+})
+var p2 = new Promise(function (resolve, reject) {
+  setTimeout(() => resolve(p), 1000)
+})
+p2.then(result => console.log(result))
+p2.catch(error => console.log(error))
+
+Note:  In the following snippet we create a promise p that will be rejected in three seconds. We also create a promise p2 that will be resolved with p in a second. Since p is still two seconds out, resolving p2 won’t have an immediate effect. Two seconds later, when p is rejected, p2 will be rejected as well, with the same rejection reason that was provided to p.
+
+----------------------------------
+
+---->Promise API: all,allSettled, race, resolve/reject
+
+==>promise.all
+
+Promise.all([
+  new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
+  new Promise((resolve, reject) => setTimeout(() => reject(new Error("Whoops!")), 2000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).catch(alert); 
+
+Note:
+- If any of the promises is rejected, the promise returned by Promise.all immediately rejects with that error.
+- In case of an error, other promises are ignored.If one promise rejects, Promise.all immediately rejects, completely forgetting about the other ones in the list. Their results are ignored.
+
+==>promise.allSettled : Promise.allSettled to get the results of all given promises, even if some of them reject.
+
+==>Promise.race : Similar to Promise.all, but waits only for the first settled promise and gets its result (or error).
+
+Promise.race([
+  new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
+  new Promise((resolve, reject) => setTimeout(() => reject(new Error("Whoops!")), 2000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).then(alert);
+
+Promise.race([
+  new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(2), 2000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).then(alert);
+---------------------------------------------------------------------------
+----> Async/await :There’s a special syntax to work with promises in a more comfortable fashion, called “async/await”.
+
+async function f() {
+  return 1;
+}
+f().then(alert);
+
+- Above code is same as:
+
+async function f() {
+  return Promise.resolve(1);
+}
+f().then(alert); 
+
+Note:The word “async” before a function means one simple thing: a function always returns a promise. Other values are wrapped in a resolved promise automatically.
+
+---->Await: The keyword await makes JavaScript wait until that promise settles and returns its result.
+async function f() {
+  let promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve("done!"), 1000)
+  });
+  let result = await promise; // wait until the promise resolves (*)
+  alert(result); // "done!"
+}
+f();
+
+
+---------------------------------------------------------------------------
+---->Example 1: Asynchronous Operation (Wait for 3 seconds and then display the message
+
+const wait = time => new Promise((resolve) => setTimeout(resolve, time));
+wait(3000).then(() => console.log('Hello! I kept my promise'));
+
+---Example: Use case
+
+let names = ['iliakan', 'remy', 'jeresig'];
+let requests = names.map(name => fetch(`https://api.github.com/users/${name}`));
+Promise.all(requests)
+  .then(responses => {
+    // all responses are resolved successfully
+    for(let response of responses) {
+      alert(`${response.url}: ${response.status}`); // shows 200 for every url
+    }
+    return responses;
+  })
+  // map array of responses into an array of response.json() to read their content
+  .then(responses => Promise.all(responses.map(r => r.json())))
+  // all JSON answers are parsed: "users" is the array of them
+  .then(users => users.forEach(user => alert(user.name)));
+
+--->Example2: Promise Chaining (then)
+
+const API_URL = "https://starwars.egghead.training/";
+
+function getFilmTitles(films) {
+  return films
+    .slice()
+    .sort((a, b) => a.episode_id - b.episode_id)
+    .map(film => `${film.episode_id}. ${film.title}`)
+    .join("\n");
+}
+
+console.log("Loading ...");
+
+fetch(API_URL + "films")
+  .then(response => response.json())
+  .then(films => {
+    console.log(films);
+  });
+
+--->Example2: Variant 2: Adding Error
+
+const API_URL = "https://starwars.egghead.training/";
+
+function getFilmTitles(films) {
+  return films
+    .slice()
+    .sort((a, b) => a.episode_id - b.episode_id)
+    .map(film => `${film.episode_id}. ${film.title}`)
+    .join("\n");
+}
+
+console.log("Loading ...");
+
+// fetch(API_URL + "films")
+fetch(API_URL + "movies")
+  .then(response => {
+    if (!response.ok) {
+      throw Error("Unsuccessful response");
+    }
+    return response.json().then(films => {
+      console.log(films);
+    });
+  })
+  .catch(error => {
+    console.warn(error);
+    console.log(":(");
+  });
+
+
+---------------------------------------------------------------
+Javascript : Execution Context
+---------------------------------------------------------------
+- learn about the JavaScript execution context to deeply understand how JavaScript code gets executed.
+
+Consider the following code:
+
+let x = 10;
+
+function timesTen(a){
+    return a * 10;
+}
+
+let y = timesTen(x);
+
+console.log(y); // 100
+
+Note:In this code:
+- When a JavaScript engine executes a script, it creates execution contexts. Each execution context has two phases: 
+(1)the creation phase and 
+(2)the execution phase.
+
+The creation phase
+- When a script executes for the first time, the JavaScript engine creates a Global Execution Context. 
+- During this creation phase, it performs the following tasks:
+1)Create a global object i.e., window in the web browser or global in Node.js.
+2)Create a this object binding which points to the global object above.
+3)Setup a memory heap for storing variables and function references.
+4)Store the function declarations in the memory heap and variables within the global execution context with the initial values as undefined.
+
+In our example, during the creation phase, the JavaScript engine stores the variables x and y and the function declaration timesTen() in the Global Execution Context. Besides, it initializes the variables x and y to undefined.
+
+- After the creation phase, the global execution context moves to the execution phase.
+
+The execution phase
+During the execution phase, the JavaScript engine executes the code line by line. In this phase, it assigns values to variables and executes the function calls.
+
+javascript execution context - global execution context in execution phase
+
+For every function call, the JavaScript engine creates a new Function Execution Context. The Function Execution Context is similar to the Global Execution Context, but instead of creating the global object, it creates the arguments object that contains a reference to all the parameters passed into the function:
+
+javascript execution context - function execution context in creation phase
+
+In our example, the function execution context creates the arguments object that references all parameters passed into the function, sets this value to the global object, and initializes the a parameter to undefined.
+
+During the execution phase of the function execution context, it assigns 10 to the parameter a and returns the result (100) to the Global Execution Context:
+
+javascript execution context - function execution context in execution phase
+
+To keep track of all the execution contexts including the Global Execution Context and Function Execution Contexts, the JavaScript engine uses a data structure named call stack
+--------------------------------------------------------------
+Async/Await
+--------------------------------------------------------------
+
+--------------------------------------------------------------
+Closures
+--------------------------------------------------------------
+- Whenever a function is invoked, a new scope is created for that call. The local variable declared inside the function belong to that scope – they can only be accessed from that function
+- The function scope is created for a function call, not for the function itself
+- Every function call creates a new scope
+
+- Example: Function Scope
+
+function buildName(name) { 
+    var greeting = "Hello, " + name; 
+    return greeting;
+}
+Note:  The function buildName() declares a local variable greeting and returns it. Every function call creates a new scope with a new local variable and. After the function is done executing, we have no way to refer to that scope again, so it’s garbage collected.
+
+- Example: Link to the scope
+
+function buildName(name) { 
+    var greeting = "Hello, " + name + "!"; 
+    var sayName = function() {
+        var welcome = greeting + " Welcome!";
+        console.log(greeting); 
+    };
+    return sayName; 
+}
+
+var sayMyName = buildName("John");
+sayMyName();  // Hello, John. Welcome!
+sayMyName();  // Hello, John. Welcome!
+sayMyName();  // Hello, John. Welcome!
+
+Note: The function sayName() from this example is a closure.
+- has it’s own local scope (with variable welcome) and has also access to the outer (enclosing) function’s scope. It this case, the variable greeting from buildName().
+- After the execution of buildName is done, the scope is not destroyed in this case. The sayMyName() function still has access to it, so it won’t be garbage collected. However, there is not other way of accessing data from the outer scope except the closure.
+- The closure serve as the gateway between the global context and the outer scope.
+
+Closure:
+- Closure are nested function which has access to the outer scope
+After the outer function is returned, by keeping a reference to the inner function (the closures) we prevent the outer scope to be destroyed.
+
+- Another extremely important thing to understand is that a closure is created at every function call. Whenever I’m using the closure, it will reference the same outer scope. If any variable is change in the outer scope, than the change will be visible in the next call as well.
+
+function buildContor(i) { 
+    var contor = i;
+    var displayContor = function() {
+        console.log(contor++);
+        contor++;
+    };
+    return displayContor; 
+}
+
+var myContor = buildContor(1);
+myContor(); // 1
+myContor(); // 2
+myContor(); // 3
+
+// new closure - new outer scope - new contor variable
+var myOtherContor = buildContor(10);
+myOtherContor(); // 10 
+myOtherContor(); // 11
+
+// myContor was not affected 
+myContor(); // 4
+
+Note:
+- All three invocation of the function myContor are accessing the same outer scope, therefore the same contor variable. If one of them change it, the next call will se the value changed.
+- it the variables from the outer scope are changed, it will affect the following calls
+
+- Why Closures
+(1)Use closures to store private data
+Javascript’s object system does not particularly encourage or enforce information hiding.
+- Through closure, you can achieve real private data in Javascript. As we saw above, the closure is the gateway between the outer scope and the rest of the program. It can choose what data to expose and what not.
+
+function initializeData() {
+    var myVar = 1; 
+    return { 
+        getVar: function() {
+            return myVar;
+        },
+        setVar: function(v) {
+            myVar = v;
+        }
+    };
+}
+
+obj = initializeData();
+
+console.log(obj.getVar()); // 1
+
+obj.setVar(2);
+console.log(obj.getVar()); // 2
+
+obj.setVar("string");
+console.log(obj.getVar()); // string
+
+Note: Here the function returned an object which has 2 functions. Because they are properties of the object which is bound to the local scope, they are closures. Through getVar and setVar, I can manipulate the myVar property but I don’t have direct access to it.
+
+(2)Use closures to create iterators
+Due to the fact that the data from outer scope is preserved, creating iterators with closures is fairly easy. The buildContor() function from above it’s actually an iterator. Every call creates a new iterator with a fixed start index. Then, at every successive invocation of the iterator, the next value is returned.
+
+(3)Implement singleton in Javascript using closures
+A singleton is an object that has only one instance during the execution of a program. It is easy to achieve that in javascript once we know closures. We know that every function call creates a new closure. But what if we want to prevent another call of the outer function? It’s really simple: we don’t give the function a name.
+
+var singleton = function () {
+    var private_contor = 0;
+    return {
+        get: function () {
+            return "Contor: " + private_contor;
+        },
+        increment: function() {
+            private_contor++;
+        }
+    };
+}();  // Attention Here - the singleton is the result of this function's call
+
+console.log(singleton.get());
+console.log(singleton.get());
+
+singleton.increment();
+console.log(singleton.get());
+singleton.increment();
+console.log(singleton.get());
+
+- Note: The only difference is that the outer function is anonymous – it doesn’t have a name -. We declare it and call it right away and after that the singleton object (which is the closure) is the only source of access to its scope. 
+------------------------------------------------------------
+-->ES7 Features
+------------------------------------------------------------
+1)Array.prototype.includes
+- It’s a replacement for indexOf which developers used to check for presence of a value in an array. 
+- indexOf is kind of awkward to use because it returns the position of an element in array or -1 in case such an element could not be found. So it returns a number, not a boolean value. 
+- Developers need to implement additional check.
+Note:  In ES6, to check the presence of a value you had to do a little dance like the code shown below, because when there’s no match, Array.prototype.indexOf returns -1 which is truthy (evaluates into true), but when the matching element has index of 0, the array does contain element, but 0 evaluates into false
+
+Example: 
+
+let arr = ['react', 'angular', 'vue']
+
+// WRONG
+if (arr.indexOf('react')) { // 0 -> evaluates to false, definitely as we expected
+  console.log('Can use React') // this line would never be executed
+}
+
+// Correct
+if (arr.indexOf('react') !== -1) {
+  console.log('Can use React')
+}
+
+- Another variant of the code is:
+
+let arr = ['react', 'angular', 'vue']
+
+// Correct
+if (~arr.indexOf('react')) {
+  console.log('Can use React')
+}
+
+
+- The ES7 code with includes would be:
+
+let arr = ['react', 'angular', 'vue']
+
+// Correct
+if (arr.includes('react')) {
+  console.log('Can use React')
+}
+
+- More examples:
+
+console.log([1, 2, 3].includes(2)) // === true)
+console.log([1, 2, 3].includes(4)) // === false)
+
+console.log([1, 2, NaN].includes(NaN)) // === true)
+
+console.log([1, 2, -0].includes(+0)) // === true)
+console.log([1, 2, +0].includes(-0)) // === true)
+
+console.log(['a', 'b', 'c'].includes('a')) // === true)
+console.log(['a', 'b', 'c'].includes('a', 1)) // === false)
+
+-------------------------------------------------------------
+ES6 and ES7 functionality
+--------------------------------------------------------------
+1) String.prototype.padStart/padEnd
+- padStart and padEnd allow us to pad a given string with any text of our choosing to ensure a string matches a given length:
+
+console.log('0.00'.padStart(20))
+
+console.log('10,000.00'.padStart(20))
+console.log('250,000.00'.padStart(20))
+console.log(''.padStart(10, 'Hi'))
+// Some text
+console.log('def'.padStart(6, 'abc')) // 'abcdef'
+// Only use what gets to length
+console.log('5678'.padStart(7, '1234'))// '1235678'
+// padEnd(desiredLength, textToAppend)
+console.log('23'.padEnd(8, '0')) // '23000000'
+
+- Use Case: One usage of padStart could include prepending an area code to phone number if the user input isn't the correct length.  padEnd could be used for decimal precision.
+
+2)Object.entries
+Object.entries allows us to get an object's enumerable property pairs in array format ([key, value]):
+
+// Object literal
+console.log(Object.entries({ 'a': 'A', 'b': 'B' })); // [["a","A"],["b","B"]]
+// String
+console.log(Object.entries('david')) // [["0","d"],["1","a"],["2","v"],["3","i"],["4","d"]]
+
+3)Object.values: Similar to keys but fetches values from the associative array
+// Object literal
+Object.values({ 'a': 23, 'b': 19 }) // [23, 19]
+// Array-like object (order not preserved)
+Object.values({ 80: 'eighty', 0: 1, 1: 'yes' }) // [1, 'yes', 'eighty']
+// String
+Object.values('davidwalsh') // ["d", "a", "v", "i", "d", "w", "a", "l", "s", "h"]
+// Array
+Object.values([1, 2, 3]) // [1, 2, 3]
+
+4)Exponentiation
+JavaScript has introduced a shorthand method of exponentiation:
+
+// 2 to the power of 8
+Math.pow(2, 8) // 256
+// ..becomes
+2 ** 8 // 256
+------------------------------------------------------------
+-->Debugging in Javascript
+------------------------------------------------------------
+- Debugging is the process of finding exactly what isn't working and fixing it.
+- These issues generally come in three forms:
+(1)syntax errors that prevent a program from running
+(2)runtime errors when code fails to execute or has unexpected behavior
+(3)semantic (or logical) errors when code doesn't do what it's meant to.
+
+- Modern code editors (and experience) can help identify syntax errors. Semantic and runtime errors are harder to find. They may cause your program to crash, make it run forever, or give incorrect output. 
+
+---> Example:  of a syntax error - often detected by the code editor:
+
+funtcion willNotWork( 
+  console.log("Yuck");
+}
+// "function" keyword is misspelled and there's a missing parenthesis
+
+---> Example: Runtime error - often detected while the program executes:
+
+function InfiniteLoop() {
+  while(true) {
+    console.log("Hello, world!");
+  }
+}
+// Calling InfiniteLoop starts an infinite loop, which may crash your browser
+
+---> Example of a semantic error - often detected after testing code output:
+
+function calcAreaOfRect(w, h) {
+  return w + h; // This should be w * h
+}
+let myRectArea = calcAreaOfRect(2, 3);
+// Correct syntax and the program executes, but this gives the wrong answer
+
+(1)Debugging: Use the JavaScript Console to Check the Value of a Variable
+- Both Chrome and Firefox have excellent JavaScript consoles, also known as DevTools, for debugging your JavaScript.
+- You can find Developer tools in your Chrome's menu or Web Console in Firefox's menu. 
+- The console.log() method, which "prints" the output of what's within its parentheses to the console, will likely be the most helpful debugging tool. Placing it at strategic points in your code can show you the intermediate values of variables. 
+
+(2)Debugging: Use typeof to Check the Type of a Variable
+- You can use typeof to check the data structure, or type, of a variable. 
+- This is useful in debugging when working with multiple data types. If you think you're adding two numbers, but one is actually a string, the results can be unexpected. Type errors can lurk in calculations or function calls. 
+- Note: Be careful especially when you're accessing and working with external data in the form of a JavaScript Object Notation (JSON) object.
+--->Examples: using typeof:
+
+console.log(typeof ""); // outputs "string"
+console.log(typeof 0); // outputs "number"
+console.log(typeof []); // outputs "object"
+console.log(typeof {}); // outputs "object"
+
+--->Example
+let seven = 7;
+let three = "3";
+console.log(typeof(seven + three));
+// Only change code below this line
+console.log(typeof(seven))
+console.log(typeof(three))
+
+(3)Debugging: Catch Misspelled Variable and Function Names (reference error)
+- Transposed, missing, or mis-capitalized characters in a variable or function name will have the browser looking for an object that doesn't exist - and complain in the form of a reference error. 
+
+--->Example:
+let receivables = 10;
+let payables = 8;
+let netWorkingCapital = recievables - payable;
+console.log(`Net working capital is: ${netWorkingCapital}`);
+
+(4)Debugging: Catch Unclosed Parentheses, Brackets, Braces and Quotes
+- One way to avoid this mistake is as soon as the opening character is typed, immediately include the closing match, then move the cursor back between them and continue coding. Fortunately, most modern code editors generate the second half of the pair automatically.
+
+(5)Debugging: Catch Mixed Usage of Single and Double Quotes
+
+(6)Debugging: Catch Use of Assignment Operator Instead of Equality Operator
+- the assignment operator (=) in JavaScript assigns a value to a variable name. 
+- the == and === operators check for equality (the triple === tests for strict equality, meaning both value and type are the same).
+
+--->Example:
+let x = 17;
+let y = 19;
+let result = "Check out";
+
+if(x = y) {
+  result = "Equal!";
+} else {
+  result = "Not equal!";
+}
+
+console.log(result);
+
+Note: The code below assigns x to be 2, which evaluates as true. Almost every value on its own in JavaScript evaluates to true, except what are known as the "falsy" values: false, 0, "" (an empty string), NaN, undefined, and null.
+
+<<toDo>> Fix the condition so the program runs the right branch, and the appropriate value is assigned to result.
+
+========================================================================================
+Unit Testing in Javascript
+========================================================================================
+--------------------------------------------------------
+- Javascript’s native features have really grown and created less demand for the functionality jQuery was able to provide. 
+- Now devs lean on the UI frameworks and native Javascript instead.
+- Javascript will provide the basis of any framework or library that you build upon, so getting to understand how the bits and pieces of the language itself works will help propel you through your journey of learning the front end side of things.
+- While there would be benefits to call out CSS preprocessors and tools like Sass, there are a ton of solutions now for CSS including CSS-in-JS called as JSS.
+
+-->What is JSS?
+- JSS is an authoring tool for CSS which allows you to use JavaScript to describe styles in a declarative, conflict-free and reusable way. It can compile in the browser, server-side or at build time in Node.
+- JSS is framework agnostic. It consists of multiple packages: the core, plugins, framework integrations and others.
+- Checkout : https://cssinjs.org/?v=v10.1.1
+
+--> Backend:
+- The back end will generally refer to the APIs that our front ends use to create dynamic experiences by interacting with endpoints from the client (like those in CRUD APIs). 
+Being able to make those requests from the client will remove the need to have to do any of that processing before the page is served to the browser.
+- NodeJS is a common runtime that you’ll find in most cloud environments as an option and will give you a similar experience to what you’d expect in a browser. The main difference is that you won’t have access to certain browser APIs nor will there be a window object and the APIs associated with it.
+
+----> How to develop applications?
+- Recommendations is that if you are using Javascript from the front end side of things, keep going by using Javascript for your backend. 
+
+--->Jamstack
+- New web application architecture
+>> The problem with the legacy web
+(1) Complex apps and complex servers:
+- A traditional website is actually a program that has to run on a web server at all times.
+Server(like Apache) --->Application(like Wordpress) ---> Database(like MySQL)
+- Running sites this way needlessly slows things down, provides way too many opportunities for attack, and is expensive to scale.
+
+>>How is Jamstack different?
+(1) Running Sites on Web Server ===>ReplacedBy ===> Deploying Sites Globally
+- A Jamstack deployment doesn’t run on a traditional setup of origin servers. Instead, automated deployments are used to push sites directly to the Edge / CDN
+
+(2) Web Pages Rendered at Runtime ===>ReplacedBy ===> Webpages Rendered for Speed
+- Rather than building content at runtime for each request, content is prebuilt and optimized during a build setup using a site generator and other build tools.
+
+(3)Monolithic Applications ===>ReplacedBy ===> APIS & MICROSERVICES
+- Decoupling the front end from the backend allows for more modular development where we can take advantage of the huge ecosystem of third party tools to provide website functionality.
+
+---?How does Jamstack work?
+- The Jamstack doesn’t change the technologies you use—Jamstack sites can be built in Javascript, PHP, Ruby, Python or virtually any language. It’s not a collection of specific software, it’s a set of best practices that combines:
+(1)GIT WORKFLOWS
+The Jamstack ties deployments closely to a Git-based workflows. Git brings the rigor and safety of version control to web projects allowing support for large projects with numerous contributors.
+(2)MODERN BUILD TOOLS
+With a build run every time a deploy happens, The Jamstack brings full support for linting code, transpiling javascript, compiling CSS, and optimizing html and assets.
+(3)CDN TECHNOLOGY
+First deployed by large enterprises, the Jamstack democratizes the use of CDN technology to deliver web content from end points as close to users as possible.
+
+- Modern web development requires modern tools and infrastructure. Wiring this stuff together on your own can be challenging, even when using cloud services like AWS.
+- Netlify is proud to be the first infrastructure provider native to the Jamstack and designed to support modern tools and workflows.
+- Site: https://www.netlify.com/
+- Getting Started: https://kentcdodds.com/blog/super-simple-start-to-serverless

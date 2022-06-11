@@ -1,0 +1,32 @@
+<html>
+<head>
+
+</head>
+<body>
+
+<script src="myext.js" type="text/javascript">
+</script>
+
+<script>
+function PrintTable(num){
+document.write("<table>");
+for(i=1;i<=12;i++){
+	document.writeln("<tr><td>"+ num+ "X" + i + "=" + (num*i) + "</td></tr>");
+}
+document.writeln("</table>");
+}
+
+function createParagraph() {
+  para = document.createElement('p');
+  para.textContent = 'You clicked the button!';
+  document.body.appendChild(para);
+}
+
+PrintTable(19);
+</script>
+
+<button onclick="createParagraph()">Click me!</button>
+<button onclick="printTable()">Click me!</button>
+</body>
+</html>
+

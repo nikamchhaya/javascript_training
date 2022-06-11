@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+$(document).ready(function () 
+{
+	$('#SubmitButton').click(function()
+	{
+		var inputs = $('input');
+		alert(    "Thanks"+ " " + 
+		$( inputs[0]).val()+ " " + $(inputs[1]).val() + " " + "for your feedback."      );
+	}     );
+});
+
+
+</script>
+</head>
+<body>
+<span style="font-size:2em; font-weight: bold">Post your feedback</span>
+<form id="form1">
+<input id="FirstNametextBox" type="text">
+<input id="LastNametextBox" type="text">
+<input id="SubmitButton" type="button" value="Submit" />
+</form>
+</body>
+</html>

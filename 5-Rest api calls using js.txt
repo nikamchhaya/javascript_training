@@ -1,0 +1,82 @@
+Four Ways To Make An API Calls In Javascript
+
+XML HTTP Request
+All modern browsers support the XMLHttpRequest object to request data from a server.
+It works on the oldest browsers as well as on new ones.
+It was deprecated in ES6 but is still widely used.
+
+COPY
+
+COPY
+
+COPY
+var request = new XMLHttpRequest();
+request.open('GET', 'https://api.github.com/users/anuradha9712');
+request.send();
+request.onload = ()=>{
+    console.log(JSON.parse(request.response));
+}
+?? Fetch
+The Fetch API provides an interface for fetching resources (including across the network) in an asynchronous manner.
+It returns a Promise
+It is an object which contains a single value either a Response or an Error that occurred.
+.then() tells the program what to do once Promise is completed.
+
+COPY
+
+COPY
+
+COPY
+fetch('https://api.github.com/users/anuradha9712')
+.then(response =>{
+    return response.json();
+}).then(data =>{
+    console.log(data);
+})
+?? Axios
+It is an open-source library for making HTTP requests.
+It works on both Browsers and Node js
+It can be included in an HTML file by using an external CDN
+It also returns promises like fetch API
+
+COPY
+
+COPY
+
+COPY
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+COPY
+
+COPY
+
+COPY
+axios.get('https://api.github.com/users/anuradha9712')
+.then(response =>{
+    console.log(response.data)
+})
+?? jQuery AJAX
+It performs asynchronous HTTP requests.
+Uses $.ajax() method to make the requests.
+
+COPY
+
+COPY
+
+COPY
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+COPY
+
+COPY
+
+COPY
+$(document).ready(function(){
+    $.ajax({
+        url: "https://api.github.com/users/anuradha9712",
+        type: "GET",
+        success: function(result){
+            console.log(result);
+        }
+    })
+})

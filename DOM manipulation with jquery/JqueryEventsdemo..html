@@ -1,0 +1,19 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+ $("button").bind({
+    click:function(){$("p").slideToggle();},
+    mouseover:function(){$("body").css("background-color","#E9E9E4");
+    $("button").css( "color","red");},  
+    mouseout:function(){$("body").css("background-color","#FFFFFF");
+    $("button").css("color", "black");}    }); });
+</script>
+</head>
+<body>
+<div>
+ <button > I am a button </button>
+</div>
+</body>
+</html>
